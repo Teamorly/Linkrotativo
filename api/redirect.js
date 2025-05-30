@@ -1,9 +1,11 @@
+// api/redirect.js
+
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://dedjdbiyymmviggpfusp.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlZGpkYml5eW1tdmlnZ3BmdXNwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU3MDYzMCwiZXhwIjoyMDY0MTQ2NjMwfQ.0u2EuynqGnPka2Urnwf0bTGSs8fu18goUauMtEQy0H0';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const groupLinks = [
   'https://chat.whatsapp.com/HsaBuLsrdPO4V21yjIQv47',
@@ -36,9 +38,10 @@ export default async function handler(req, res) {
     const index = currentClick % groupLinks.length;
     const redirectUrl = groupLinks[index];
 
-    return res.redirect(302, redirectUrl);
+    res.writeHead(302, { Location: redirectUrl });
+    res.end();
   } catch (err) {
     console.error('Redirect failed:', err);
-    return res.status(500).json({ error: 'Redirection error', message: err.message });
+    res.status(500).json({ error: 'Redirection error', message: err.message });
   }
 }
